@@ -5,6 +5,7 @@ import NavBar from "./Component/NavBar";
 import SideDrawer from "./Component/SideDrawer";
 import CategoryCard from "./Component/CategoryCard";
 import ProductCard from "./Component/ProductCard";
+import { API_ENDPOINTS, getCategoryIcon } from "./constant";
 
 interface Product {
   id: number;
@@ -40,8 +41,8 @@ export default function Home() {
       try {
         setLoading(true);
         const [resProducts, resCategories] = await Promise.all([
-          fetch('https://fakestoreapi.com/products'),
-          fetch('https://fakestoreapi.com/products/categories'),
+          fetch(API_ENDPOINTS.PRODUCTS),
+          fetch(API_ENDPOINTS.CATEGORIES),
         ]);
 
         if (!resProducts.ok || !resCategories.ok) {
@@ -106,21 +107,6 @@ export default function Home() {
     (total, item) => total + item.quantity,
     0
   );
-
-  const getCategoryIcon = (catName: string) => {
-    switch (catName.toLowerCase()) {
-      case "electronics":
-        return "💻";
-      case "jewelery":
-        return "💎";
-      case "men's clothing":
-        return "👔";
-      case "women's clothing":
-        return "👗";
-      default:
-        return "🏷️";
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">

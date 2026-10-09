@@ -1,17 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
+import { MOCK_LOCATIONS } from '../constant';
 
 export default function NavBar({ itemCount = 0, onSearch = () => {}, onLocationChange = () => {}, onOpenCart = () => {} }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLocation, setSelectedLocation] = useState('Home - Indiranagar, Bengaluru');
+  const [selectedLocation, setSelectedLocation] = useState(MOCK_LOCATIONS[0]);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
-
-  const mockLocations = [
-    'Home - Indiranagar, Bengaluru',
-    'Work - Koramangala, Bengaluru',
-    'Other - HSR Layout, Bengaluru',
-  ];
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -95,7 +90,7 @@ export default function NavBar({ itemCount = 0, onSearch = () => {}, onLocationC
                 <div className="px-3 py-1 text-xs font-bold text-gray-400 uppercase tracking-wider">
                   Select Location
                 </div>
-                {mockLocations.map((loc, idx) => (
+                {MOCK_LOCATIONS.map((loc, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleSelectLocation(loc)}
