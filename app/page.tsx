@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import NavBar from "./Component/NavBar";
-import SideDrawer from "./Component/SideDrawer";
-import CategoryCard from "./Component/CategoryCard";
-import ProductCard from "./Component/ProductCard";
+import NavBar from "./Components/NavBar";
+import SideDrawer from "./Components/SideDrawer";
+import CategoryCard from "./Components/CategoryCard";
+import ProductCard from "./Components/ProductCard";
 import { API_ENDPOINTS, getCategoryIcon } from "./constant";
 
 // Fetch functions
@@ -114,7 +114,7 @@ export default function Home() {
         onRemoveItem={handleRemoveItem as any}
       />
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-6 space-y-8">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-2.5 sm:px-4 py-4 sm:py-6 space-y-6 sm:space-y-8">
         {/* Categories */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">

@@ -68,7 +68,7 @@ Live product filter showcase displaying dynamic category filtering and instant i
 ```
 zepto-clone/
 ├── app/
-│   ├── Component/
+│   ├── Components/
 │   │   ├── Button.js         # Reusable button component
 │   │   ├── CategoryCard.js   # Category filter button component
 │   │   ├── NavBar.js         # Top navigation header with cart badge & search
