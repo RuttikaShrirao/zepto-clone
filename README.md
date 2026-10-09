@@ -34,13 +34,13 @@ npm run start
 
 ---
 
-## 🧠 State Management Explanation
+## 🧠 State Management & Data Fetching Explanation
 
-In this application, **React's built-in State Management (`useState` and `useEffect`)** was chosen over external libraries like Redux or Zustand for the following strategic reasons:
+In this application, **TanStack Query (`@tanstack/react-query`)** along with **React's `useState`** were chosen for data management for the following reasons:
 
-1. **Lightweight & Zero Overhead**: The cart state and UI filters are scoped locally to the user session. Using native React state avoids external library bundle overhead and keeps page load speeds superfast.
-2. **Predictable Data Flow**: Unidirectional state flow from [`app/page.tsx`](file:///c:/Personal%20Folder/Andro_buddy_zepto_clone/zepto-clone/app/page.tsx) down to components (`NavBar`, `ProductCard`, `CategoryCard`, `SideDrawer`) makes props explicit and easy to debug.
-3. **Immutability & Reactive Updates**: Cart item updates (`quantity` increment/decrement, item removal, line item subtotal calculation) use pure array operations (`map`, `filter`, `reduce`), guaranteeing smooth re-renders.
+1. **Server State Caching**: **TanStack Query** efficiently handles API requests, background refetching, and response caching (5 minutes stale time).
+2. **Lightweight Local State**: The shopping cart items and UI open/close states are managed with React's native state for zero unnecessary re-renders.
+3. **Predictable Unidirectional Data Flow**: State flows cleanly from [`app/page.tsx`](file:///c:/Personal%20Folder/Andro_buddy_zepto_clone/zepto-clone/app/page.tsx) down to presentational components (`NavBar`, `ProductCard`, `CategoryCard`, `SideDrawer`).
 
 ---
 
@@ -76,8 +76,9 @@ zepto-clone/
 │   │   └── SideDrawer.js     # Slide-out cart sidebar sheet
 │   ├── constant.ts           # Centralized API endpoints & helper functions
 │   ├── globals.css           # Tailwind CSS directives & global styles
-│   ├── layout.tsx            # App layout wrapper
-│   └── page.tsx              # Main dashboard connecting FakeStore API & state
+│   ├── layout.tsx            # App layout wrapper with Providers
+│   ├── page.tsx              # Main dashboard using TanStack Query & components
+│   └── providers.tsx         # TanStack QueryClientProvider wrapper
 ├── public/
 │   ├── Screenshot 2026-10-09 172334.png
 │   ├── Screenshot 2026-10-09 172347.png

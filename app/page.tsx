@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import NavBar from "./Component/NavBar";
 import SideDrawer from "./Component/SideDrawer";
 import CategoryCard from "./Component/CategoryCard";
@@ -24,45 +25,45 @@ interface CartItem extends Product {
   quantity: number;
 }
 
+// Fetcher functions for TanStack Query
+const fetchProducts = async (): Promise<Product[]> => {
+  const res = await fetch(API_ENDPOINTS.PRODUCTS);
+  if (!res.ok) throw new Error('Failed to fetch products');
+  return res.json();
+};
+
+const fetchCategories = async (): Promise<string[]> => {
+  const res = await fetch(API_ENDPOINTS.CATEGORIES);
+  if (!res.ok) throw new Error('Failed to fetch categories');
+  return res.json();
+};
+
 export default function Home() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
 
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  // Fetch Products & Categories from FakeStore API
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-        const [resProducts, resCategories] = await Promise.all([
-          fetch(API_ENDPOINTS.PRODUCTS),
-          fetch(API_ENDPOINTS.CATEGORIES),
-        ]);
+  // TanStack Query for Products
+  const {
+    data: products = [],
+    isLoading: isProductsLoading,
+    isError: isProductsError,
+    error: productsError,
+  } = useQuery({
+    queryKey: ['products'],
+    queryFn: fetchProducts,
+  });
 
-        if (!resProducts.ok || !resCategories.ok) {
-          throw new Error('Failed to fetch data from API');
-        }
+  // TanStack Query for Categories
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categories'],
+    queryFn: fetchCategories,
+  });
 
-        const dataProducts: Product[] = await resProducts.json();
-        const dataCategories: string[] = await resCategories.json();
-
-        setProducts(dataProducts);
-        setCategories(dataCategories);
-      } catch (err: any) {
-        setError(err.message || 'An error occurred while loading products');
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, []);
+  const loading = isProductsLoading;
+  const error = isProductsError ? (productsError as Error)?.message || 'Failed to load products' : null;
 
   const handleAddToCart = (product: Product) => {
     setCartItems((prevItems) => {
