@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import NavBar from "./Component/NavBar";
 import SideDrawer from "./Component/SideDrawer";
+import CategoryCard from "./Component/CategoryCard";
+import ProductCard from "./Component/ProductCard";
 
 interface Product {
   id: number;
@@ -129,7 +131,7 @@ export default function Home() {
         onSearch={((query: string) => setSearchQuery(query)) as any}
       />
 
-      {/* Side Cart Drawer */}
+      {/* Side Cart Drawer Component */}
       <SideDrawer
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -138,7 +140,7 @@ export default function Home() {
         onRemoveItem={handleRemoveItem as any}
       />
 
-      {/* Hero Banner Section */}
+      {/* Main Content Area */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 py-6 space-y-8">
         {/* Categories Section */}
         <section className="space-y-4">
@@ -147,7 +149,7 @@ export default function Home() {
             {selectedCategory !== 'all' && (
               <button
                 onClick={() => setSelectedCategory('all')}
-                className="text-xs sm:text-sm font-semibold text-[#ff3269] hover:underline"
+                className="text-xs sm:text-sm font-semibold text-[#ff3269] hover:underline cursor-pointer"
               >
                 Clear Filter
               </button>
@@ -155,30 +157,20 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-none">
-            <button
+            <CategoryCard
+              category={`All Items (${products.length})`}
+              isSelected={selectedCategory === 'all'}
               onClick={() => setSelectedCategory('all')}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold capitalize whitespace-nowrap transition-all ${
-                selectedCategory === 'all'
-                  ? 'bg-[#3b0066] text-white shadow-md'
-                  : 'bg-white border border-gray-200 text-gray-700 hover:bg-purple-50'
-              }`}
-            >
-              <span>✨</span>
-              <span>All Items ({products.length})</span>
-            </button>
+              icon="✨"
+            />
             {categories.map((cat) => (
-              <button
+              <CategoryCard
                 key={cat}
+                category={cat}
+                isSelected={selectedCategory === cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold capitalize whitespace-nowrap transition-all ${
-                  selectedCategory === cat
-                    ? 'bg-[#3b0066] text-white shadow-md'
-                    : 'bg-white border border-gray-200 text-gray-700 hover:bg-purple-50'
-                }`}
-              >
-                <span>{getCategoryIcon(cat)}</span>
-                <span>{cat}</span>
-              </button>
+                icon={getCategoryIcon(cat)}
+              />
             ))}
           </div>
         </section>
@@ -189,9 +181,6 @@ export default function Home() {
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 capitalize">
               {selectedCategory === 'all' ? 'Featured Products' : selectedCategory}
             </h2>
-            <span className="text-xs bg-purple-100 text-purple-800 font-semibold px-2.5 py-1 rounded-full">
-              {filteredProducts.length} Items Found
-            </span>
           </div>
 
           {loading ? (
@@ -215,7 +204,7 @@ export default function Home() {
               <p className="text-sm font-bold text-red-600">{error}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="text-xs bg-red-600 text-white font-bold px-4 py-2 rounded-lg"
+                className="text-xs bg-red-600 text-white font-bold px-4 py-2 rounded-lg cursor-pointer"
               >
                 Retry
               </button>
@@ -233,78 +222,13 @@ export default function Home() {
               {filteredProducts.map((product) => {
                 const inCart = cartItems.find((item) => item.id === product.id);
                 return (
-                  <div
+                  <ProductCard
                     key={product.id}
-                    className="bg-white rounded-xl border border-gray-100 shadow-xs hover:shadow-md p-3 flex flex-col justify-between transition-all group"
-                  >
-                    <div>
-                      {/* Product Image */}
-                      <div className="relative bg-white rounded-lg p-2 flex items-center justify-center mb-3 h-36 border border-gray-50">
-                        <img
-                          src={product.image}
-                          alt={product.title}
-                          className="h-28 max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-
-                      {/* Tag & Rating */}
-                      <div className="flex items-center justify-between text-[10px] text-gray-400 mb-1">
-                        <span className="font-bold uppercase truncate max-w-[90px]">
-                          {product.category}
-                        </span>
-                        {product.rating && (
-                          <span className="flex items-center gap-0.5 text-amber-500 font-bold">
-                            ★ {product.rating.rate}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Title */}
-                      <h3 className="text-xs font-bold text-gray-800 line-clamp-2 leading-snug min-h-[32px]">
-                        {product.title}
-                      </h3>
-                    </div>
-
-                    {/* Pricing & Add to Cart */}
-                    <div className="mt-3 pt-2 border-t border-gray-50 flex items-center justify-between">
-                      <div>
-                        <span className="text-sm font-extrabold text-gray-900">
-                          ${product.price.toFixed(2)}
-                        </span>
-                      </div>
-
-                      {inCart ? (
-                        <div className="flex items-center border border-[#ff3269] rounded-lg overflow-hidden bg-purple-50">
-                          <button
-                            onClick={() =>
-                              handleUpdateQuantity(product.id, inCart.quantity - 1)
-                            }
-                            className="px-2 py-0.5 text-[#ff3269] font-bold text-xs hover:bg-[#ff3269] hover:text-white transition-colors"
-                          >
-                            -
-                          </button>
-                          <span className="px-2 py-0.5 text-xs font-bold text-gray-800">
-                            {inCart.quantity}
-                          </span>
-                          <button
-                            onClick={() =>
-                              handleUpdateQuantity(product.id, inCart.quantity + 1)
-                            }
-                            className="px-2 py-0.5 text-[#ff3269] font-bold text-xs hover:bg-[#ff3269] hover:text-white transition-colors"
-                          >
-                            +
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => handleAddToCart(product)}
-                          className="border border-[#ff3269] text-[#ff3269] hover:bg-[#ff3269] hover:text-white text-xs font-bold px-3 py-1 rounded-lg transition-colors active:scale-95"
-                        >
-                          ADD
-                        </button>
-                      )}
-                    </div>
-                  </div>
+                    product={product as any}
+                    cartQuantity={inCart ? inCart.quantity : 0}
+                    onAddToCart={handleAddToCart as any}
+                    onUpdateQuantity={handleUpdateQuantity as any}
+                  />
                 );
               })}
             </div>
